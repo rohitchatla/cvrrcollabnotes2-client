@@ -4,7 +4,7 @@ import { initialValue } from "./slateInitialValue";
 import io from "socket.io-client";
 import { Operation, Value } from "slate";
 
-const socket = io("http://localhost:4000");
+const socket = io("https://cvrrcollabnotes2.herokuapp.com/"); //http://localhost:4000
 
 interface Props {
   groupId: string;
@@ -17,10 +17,12 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
   const remote = useRef(false);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/groups/${groupId}`).then(x =>
-      x.json().then(data => {
-        setValue(Value.fromJSON(data));
-      })
+    fetch(`https://cvrrcollabnotes2.herokuapp.com/groups/${groupId}`).then(
+      //http://localhost:4000
+      (x) =>
+        x.json().then((data) => {
+          setValue(Value.fromJSON(data));
+        })
     );
     const eventName = `new-remote-operations-${groupId}`;
     socket.on(
@@ -42,7 +44,7 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
   return (
     <>
       <button
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           e.preventDefault();
           // bold selected text
           editor.current!.toggleMark("bold");
@@ -51,7 +53,7 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
         bold
       </button>
       <button
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           e.preventDefault();
           // bold selected text
           editor.current!.toggleMark("italic");
@@ -64,7 +66,7 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
         style={{
           backgroundColor: "#fafafa",
           maxWidth: 800,
-          minHeight: 150
+          minHeight: 150,
         }}
         value={value}
         renderMark={(props, _editor, next) => {
@@ -73,7 +75,7 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
               <strong
                 style={{
                   letterSpacing: 1,
-                  color: "pink"
+                  color: "pink",
                 }}
               >
                 {props.children}
@@ -85,11 +87,11 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
 
           return next();
         }}
-        onChange={opts => {
+        onChange={(opts) => {
           setValue(opts.value);
 
           const ops = opts.operations
-            .filter(o => {
+            .filter((o) => {
               if (o) {
                 return (
                   o.type !== "set_selection" &&
@@ -108,7 +110,7 @@ export const SyncingEditor: React.FC<Props> = ({ groupId }) => {
               editorId: id.current,
               ops,
               value: opts.value.toJSON(),
-              groupId
+              groupId,
             });
           }
         }}
